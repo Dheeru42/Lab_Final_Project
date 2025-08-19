@@ -1,0 +1,13 @@
+<--------------------------- Face Mask Detection with Live Alert System --------------------------->
+
+----------->Objective: Detect if people are wearing face masks in real-time using a webcam.
+----------->Tools: Python, OpenCV, TensorFlow/Keras, Flask, Haar Cascades
+----------->Mini-Guide:
+--------------->Collect or use Kaggle dataset of masked/unmasked faces
+--------------->Preprocess images (resize, grayscale)
+--------------->Train CNN model using Keras
+--------------->Integrate model with OpenCV video stream
+--------------->Use Haar Cascades for face detection
+--------------->Add logic to alert when no mask is detected
+--------------->Deploy with Flask (optional)
+--------------->Deliverables: Trained model, real-time detection script, short video demo, GitHub repo
