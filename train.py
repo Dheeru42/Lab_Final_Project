@@ -50,22 +50,27 @@ testDataset = image_generator.flow_from_directory(directory=str(data_dir), batch
 model = Sequential()
 model.add(Conv2D(32,kernel_size=(3,3), activation='relu',input_shape=(224,224,3))) # input layer
 model.add(MaxPool2D(pool_size=(2,2)))
-model.add(Conv2D(64,kernel_size=(3,3), activation='relu',input_shape=(224,224,3)))
+model.add(Conv2D(64,kernel_size=(3,3), activation='relu'))
+model.add(MaxPool2D(pool_size=(2,2)))
+model.add(Conv2D(128,kernel_size=(3,3), activation='relu'))
 model.add(MaxPool2D(pool_size=(2,2)))
 model.add(Flatten())
 model.add(Dense(256, activation='relu'))  # Dense layer 1
 model.add(Dropout(0.5))
-model.add(Dense(128, activation='relu')) # Dense layer 1
+model.add(Dense(128, activation='relu')) # Dense layer 2
 model.add(Dense(2, activation='softmax')) # output layer
 
 # CNN Model Summary
 model.summary()
 
 # Compile Model
-model.compile(loss="categorical_crossentropy", optimizer="adam", metrics=["acc"])
+model.compile(loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"])
 
 # train using the generators
 history = model.fit(trainDataset,validation_data=testDataset,epochs=10, verbose=1)
+
+# save model 
+model.save('model.h5')
 
 # Evaluate model
 evaluation = model.evaluate(testDataset)
@@ -73,8 +78,8 @@ print("Val loss:", evaluation[0])
 print("Val Accuracy:", evaluation[1]*100)
 
 # Model Accuracy Graph
-plt.plot(history.history['acc'])
-plt.plot(history.history['val_acc'])
+plt.plot(history.history['accuracy'])
+plt.plot(history.history['val_accuracy'])
 plt.title('Model accuracy')
 plt.ylabel('Accuracy')
 plt.xlabel('Epoch')
