@@ -36,7 +36,7 @@ while True:
         class_idx = np.argmax(pred)
 
         # Label
-        label = "Masked" if class_idx == 1 else "Unmasked"
+        label = "Masked" if class_idx == 1 else "Un Masked"
         color = (0, 255, 0) if class_idx == 1 else (0, 0, 255)
 
         # Draw rectangle & label
