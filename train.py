@@ -5,8 +5,9 @@ import os
 warnings.filterwarnings("ignore")   # Hide all warnings
 from tensorflow import keras 
 from keras import Sequential
-from keras.models import Model
-from keras.layers import Dense,Conv2D,MaxPool2D,Flatten,Dropout
+from keras.callbacks import ModelCheckpoint
+from keras.models import Model,load_model
+from keras.layers import Dense,Conv2D,MaxPool2D,Flatten
 from matplotlib import pyplot as plt
 import seaborn as sns
 import pathlib
@@ -37,27 +38,32 @@ image_generator = tf.keras.preprocessing.image.ImageDataGenerator(rescale=1 / 25
 # extract train image data from dataset directory
 trainDataset = image_generator.flow_from_directory(directory=str(data_dir), batch_size=batch_size,
                                                      classes=list(CLASS_NAMES),
-                                                     target_size=(224, 224),
+                                                     target_size=(256, 256),
                                                      shuffle=True, subset="training")
 
 # extract test image data from dataset directory
 testDataset = image_generator.flow_from_directory(directory=str(data_dir), batch_size=batch_size,
                                                     classes=list(CLASS_NAMES),
-                                                    target_size=(224, 224),
+                                                    target_size=(256, 256),
                                                     shuffle=True, subset="validation")
 
 # Design CNN Model 
 model = Sequential()
-model.add(Conv2D(32,kernel_size=(3,3), activation='relu',input_shape=(224,224,3))) # input layer
+model.add(Conv2D(16,kernel_size=(3,3), activation='relu',input_shape=(256,256,3))) # input layer
 model.add(MaxPool2D(pool_size=(2,2)))
-model.add(Conv2D(64,kernel_size=(3,3), activation='relu'))
+
+model.add(Conv2D(32,kernel_size=(3,3), activation='relu'))  # middle layer 1
 model.add(MaxPool2D(pool_size=(2,2)))
-model.add(Conv2D(128,kernel_size=(3,3), activation='relu'))
+
+model.add(Conv2D(64,kernel_size=(3,3), activation='relu')) # middle layer 2
 model.add(MaxPool2D(pool_size=(2,2)))
+
+model.add(Conv2D(128,kernel_size=(3,3), activation='relu')) # middle layer 3
+model.add(MaxPool2D(pool_size=(2,2)))
+
 model.add(Flatten())
-model.add(Dense(256, activation='relu'))  # Dense layer 1
-model.add(Dropout(0.5))
-model.add(Dense(128, activation='relu')) # Dense layer 2
+model.add(Dense(128, activation='relu')) # Dense layer 1
+model.add(Dense(64, activation='relu')) # Dense layer 2
 model.add(Dense(2, activation='softmax')) # output layer
 
 # CNN Model Summary
@@ -66,16 +72,20 @@ model.summary()
 # Compile Model
 model.compile(loss="categorical_crossentropy", optimizer="adam", metrics=["accuracy"])
 
+checkpoint = ModelCheckpoint("model.h5",
+                             save_best_only=True,
+                             verbose=1)
+
 # train using the generators
-history = model.fit(trainDataset,validation_data=testDataset,epochs=10, verbose=1)
+history = model.fit(trainDataset,validation_data=testDataset,epochs=20, verbose=1, callbacks=[checkpoint])
 
-# save model 
-model.save('model.h5')
-
-# Evaluate model
+# model evaluation
 evaluation = model.evaluate(testDataset)
 print("Val loss:", evaluation[0])
 print("Val Accuracy:", evaluation[1]*100)
+
+# Save model
+model.save("model.h5")
 
 # Model Accuracy Graph
 plt.plot(history.history['accuracy'])
