@@ -26,7 +26,7 @@ CLASS_NAMES = np.array([item.name for item in data_dir.glob('*')])
 
 # Data Augumentation on image
 #20% val 80% Train
-image_generator = tf.keras.preprocessing.image.ImageDataGenerator(rescale=1 / 255, validation_split=0.2,
+image_generator = tf.keras.preprocessing.image.ImageDataGenerator(rescale=1. / 255, validation_split=0.2,
                                      rotation_range=20,
                                      zoom_range=0.15,
                                      width_shift_range=0.2,
@@ -63,7 +63,11 @@ model.add(MaxPool2D(pool_size=(2,2)))
 
 model.add(Flatten())
 model.add(Dense(128, activation='relu')) # Dense layer 1
+
 model.add(Dense(64, activation='relu')) # Dense layer 2
+
+model.add(Dense(32, activation='relu')) # Dense layer 3
+
 model.add(Dense(2, activation='softmax')) # output layer
 
 # CNN Model Summary
@@ -77,7 +81,7 @@ checkpoint = ModelCheckpoint("model.h5",
                              verbose=1)
 
 # train using the generators
-history = model.fit(trainDataset,validation_data=testDataset,epochs=20, verbose=1, callbacks=[checkpoint])
+history = model.fit(trainDataset,validation_data=testDataset,epochs=10, verbose=1, callbacks=[checkpoint])
 
 # model evaluation
 evaluation = model.evaluate(testDataset)
