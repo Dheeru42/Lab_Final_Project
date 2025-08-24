@@ -26,7 +26,7 @@ CLASS_NAMES = np.array([item.name for item in data_dir.glob('*')])
 
 # Data Augumentation on image
 #20% val 80% Train
-image_generator = tf.keras.preprocessing.image.ImageDataGenerator(rescale=1. / 255, validation_split=0.2,
+image_generator = tf.keras.preprocessing.image.ImageDataGenerator(rescale=1.0/255, validation_split=0.2,
                                      rotation_range=20,
                                      zoom_range=0.15,
                                      width_shift_range=0.2,
